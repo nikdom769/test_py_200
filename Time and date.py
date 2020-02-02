@@ -56,7 +56,37 @@ class Time:
             self.add_hour(1)
             minute -= 60
         self.m += minute      
-        
+    
+    
+    def delta_time(self, *args, new_day=True):
+        """
+        Calculate delta time
+        param: new_day - True - new_day, False - day now
+        Examples:
+            Format: 24 h only: (21, 15) or ('21:15')
+            t = Time('21:15')
+            t.delta_time(21, 15)                 # d:1, h:0, m:0
+            t.delta_time(11, 45, new_day=False)  # h:9, m:30
+            t.delta_time(11, 45)                 # d:0, h:14, m:30
+            t.delta_time(21, 15, new_day=False)  # h:0, m:0
+            
+        Exceptions:
+            TypeError('Arguments must be in the next format:\
+                         hour - int and minute - int or "HH:MM"'
+        """
+        self.h_new, self.m_new = self.__validate_time(*args)
+        self.t_in_m_new = self.h_new * 60 + self.m_new
+        if new_day:
+            self.delta_old_day = 1440 - (self.h * 60 + self.m)
+            self.delta = self.delta_old_day + self.t_in_m_new
+            self.day = self.delta % (24 * 60)
+            return f"d:{self.delta//(24*60)}, h:{self.day//60}, m:{self.day%60}"   
+        else:
+            self.t_in_m_old = self.h * 60 + self.m
+            self.delta = abs(self.t_in_m_new - self.t_in_m_old)
+            return f"h:{self.delta//60}, m:{self.delta%60}"
+
+    
     @property
     def time(self):
         return self.__str__()
