@@ -307,43 +307,104 @@ def func_a():
         
         
 # 11. Циклическая зависимость (стр. 39-44)
-# 
+# Сделано без проверок ....
 
 class Node:
-    def __init__(self, prev=None, next_=None):
-        self.__prev = prev
-        self.__next = next_
+    def __init__(self, data, prev=None, next_=None):
+        self.prev = prev
+        self.next = next_
+        self.data = data
+    
+    """
     def set_next(self, next_):
         self.__next = next_
 
     def set_prev(self, prev):
         self.__prev = prev
+
+    def next_node(self):
+        return self.__next
+
+    def set_next_node(self, next_):
+        self.__next = next_
+
+    def prev_node(self):
+        return self.__prev
+
+    def set_prev_node(self, prev):
+        self.__prev = prev
+    """
         
     def __str__(self):
-        ...
-        
+        return f"{self.data}"
+
     def __repr__(self):
         ...
 
 class LinkedList:
 
+    def __init__(self):
+        self.__head = Node('head')
+        self.__tail = Node('tail', prev=self.__head)
+        self.__head.next = self.__tail
+        self.len = 0
 
 
-    def insert(self, node, index=0):
-        '''
+    # Служебные методы
+    def _insert_node(self, current, data):
+        """
+        Insert data after current:Node
+        """
+        new_node = Node(data, next_=current.next, prev=current)
+        (current.next).prev = new_node
+        current.next = new_node
+        self.len += 1
+    
+    def _find_ind(self, ind=0):
+        """
+        Find "Node" for index
+        Return "Node"
+        """
+        if 0 <= ind < self.len:
+            f_node = self.__head
+            for i in range(self.len):
+                if i == ind:
+                    return f_node
+                else:
+                    f_node = f_node.next
+        elif -self.len < ind <= -1:
+            f_node = self.__tail.prev
+            for i in range(1, self.len):
+                if i == abs(ind):
+                    return f_node
+                else:
+                    f_node = f_node.prev
+        else:
+            raise ValueError ("Index error")
+
+    def _del_node(self, current):
+        """
+        Delete Node(current)
+        """
+        (current.prev).next = current.next
+        (current.next).prev = current.prev # если строки поменять местами работать не будет
+        self.len -= 1
+    
+    
+    # Пользовательские методы
+    def insert(self, data, ind=0):
+        """
         Insert Node to any place of LinkedList
-        node - Node
-        index - position of node
-        '''
-        ...
+        index - position of node - 0 ... lenght or -lenght ... -1
+        """
+        f_node = self._find_ind(ind)
+        self._insert_node(f_node, data)
         
-       
-    def append(self, node):
-        '''
+    def append(self, data):
+        """
         Append Node to tail of LinkedList
-        node - Node
-        '''
-        ...
+        """
+        self._insert_node(self.__tail.prev, data)
 
     def clear(self):
         '''
@@ -351,15 +412,37 @@ class LinkedList:
         '''
         ...
 
-    def find(self, node):
-        ...
+    def find(self, data):
+        """
+        Find index Node(data)
+        Return: int (Index)
+        """
+        f_node = self.__head.next
+        for i in range(self.len):
+            if f_node.data == data:
+                return i #f"Index: {i}"
+            else:
+                f_node = f_node.next
+        else:
+            raise ValueError ("Index error")
 
-
-    def remove(self, node):
-        ...
+    def remove(self, data):
+        """
+        Delete Node for value
+        Return (index, value)
+        """
+        ind = self.find(data)
+        self.delete(ind)
+        return (ind, data)
         
     def delete(self, index):
-        ...
+        """
+        Delete Node for index
+        Return: value 
+        """
+        f_node = self._find_ind(ind)
+        self._del_node(f_node)
+        return f"{f_node.data}"
 
 
 
