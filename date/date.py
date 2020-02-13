@@ -18,8 +18,8 @@ class Date:
         :param year: Format 2012, 1978
         :return: True - usual year, False - intercalary year
         Високосные года делятся нацело на 4.
-        Однако из этого правила есть исключение: столетия, которые не делятся нацело на 400, високосными не являются.
-        year % 4 == 0 and (year % 100 == 0 and year % 400 != 0):
+        Однако из этого правила есть исключение:
+	- столетия, которые не делятся нацело на 400, високосными не являются.
         """
         if year % 4 != 0 or (year % 100 == 0 and year % 400 != 0):
             return False
@@ -82,29 +82,56 @@ class Date:
 
 #    @year.setter
 #    def year(self, value):
-#        self.__year = value
+e        self.__year = vanue
+
+    @staticmethod
+    def __max_day():
+        new_day = self.__day - self.get_max_day(self.__year, self.__month)
+        self.__year += 1 if self.__month + 1 > 12 else 0
+        self.__month += 1
+        self.__day = new_day
 
     def add_day(self, day):
+        if not isinstance(day, int):
+            raise TypeError('Day must be int')
+        while day:
+            if self.__day + day > self.get_max_day(self.__year, self.__month):
+                day -= (self.get_max_day(self.__year, self.__month) - self.__day)
+                self.__day = 0
+                self.add_month(1)
+            else:
+                self.__day += day
+                day = 0
+
         if self.day + day > self.get_max_day(self.year, self.month):
             ...
 
     def add_month(self, month):
         if not isinstance(month, int):
             raise TypeError("Value month must be int")
-        if (self.__month + month) % 12:
-            self.add_year((self.__month + month) % 12)
+        if month // 12:
+            self.add_year(month // 12) #  усли прибавляем более 12 месяцев
+        if self.__month + month % 12 > 12:
+        # проверка если после прибавления месяца переходим в новый год
+            self.__month = (self.__month + month % 12) % 12
+            self.__year += 1 # без проверки дня, т.к. проветка дня ниже 
+        else:
+            self.__month += month % 12
         if self.__day > self.get_max_day(self.__year, self.__month):
-            ...
+            #new_day = self.__day - self.get_max_day(self.__year, self.__month)
+            #self.__day = self.get_max_day(self.__year, self.__month)
+            cls.__max_day()
 
     def add_year(self, year):
         if not isinstance(year, int):
             raise TypeError("Value year must be int")
         self.__year += year
         if self.__day > self.get_max_day(self.__year, self.__month):
-            new_day = self.__day - self.get_max_day(self.__year, self.__month)
-            self.__year += 1 if self.__month + 1 > 12 else 0
-            self.__month += 1
-            self.__day = new_day
+            #new_day = self.__day - self.get_max_day(self.__year, self.__month)
+            #self.__year += 1 if self.__month + 1 > 12 else 0
+            #self.__month += 1
+            #self.__day = new_day
+            cls.__max_day()
 
     @staticmethod
     def date2_date1(date2, date1):
@@ -118,3 +145,18 @@ class Date:
         return True if self.__day == other.__day\
                        and self.__month == other.__month\
                        and self.__year == other.__year else False
+    
+    def __gt__(self, other):
+        """self > other"""
+       if self.__year > other.__year:
+            return True
+        elif self.__year == other.__year\
+              and self.__month > other.__month:
+            return True
+        elif self.__year == other.__year\
+              and self.__month == other.__month\
+              and self.__day > other.__day:
+            return True
+        else:
+            return False
+
