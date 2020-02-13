@@ -1,5 +1,5 @@
 import unittest
-from date.date import Date
+from date import Date
 
 
 class MyTestCase(unittest.TestCase):

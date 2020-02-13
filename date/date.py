@@ -64,28 +64,19 @@ class Date:
     def day(self):
         return self.__day
 
-#    @day.setter
-#    def day(self, value):
-#        self.__day = value
-
     @property
     def month(self):
         return self.__month
-
-#    @month.setter
-#    def month(self, value):
-#        self.__month = value
 
     @property
     def year(self):
         return self.__year
 
-#    @year.setter
-#    def year(self, value):
-e        self.__year = vanue
-
-    @staticmethod
-    def __max_day():
+    def __max_day(self):
+        """
+        Пересчет даты, если при изменении года или месяца текущий день больше
+        максимального дня нового месяца
+        """
         new_day = self.__day - self.get_max_day(self.__year, self.__month)
         self.__year += 1 if self.__month + 1 > 12 else 0
         self.__month += 1
@@ -103,9 +94,6 @@ e        self.__year = vanue
                 self.__day += day
                 day = 0
 
-        if self.day + day > self.get_max_day(self.year, self.month):
-            ...
-
     def add_month(self, month):
         if not isinstance(month, int):
             raise TypeError("Value month must be int")
@@ -120,7 +108,7 @@ e        self.__year = vanue
         if self.__day > self.get_max_day(self.__year, self.__month):
             #new_day = self.__day - self.get_max_day(self.__year, self.__month)
             #self.__day = self.get_max_day(self.__year, self.__month)
-            cls.__max_day()
+            self.__max_day()
 
     def add_year(self, year):
         if not isinstance(year, int):
@@ -131,7 +119,7 @@ e        self.__year = vanue
             #self.__year += 1 if self.__month + 1 > 12 else 0
             #self.__month += 1
             #self.__day = new_day
-            cls.__max_day()
+            self.__max_day()
 
     @staticmethod
     def date2_date1(date2, date1):
@@ -148,7 +136,7 @@ e        self.__year = vanue
     
     def __gt__(self, other):
         """self > other"""
-       if self.__year > other.__year:
+        if self.__year > other.__year:
             return True
         elif self.__year == other.__year\
               and self.__month > other.__month:
