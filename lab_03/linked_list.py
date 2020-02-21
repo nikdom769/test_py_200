@@ -15,7 +15,7 @@ class Data(Subject):
     def __init__(self, value):
         super().__init__()
         self.__value = value
-        self.add_observer(self.__value)
+        #self.add_observer(self.__value)
 
     def read_val(self):
         return self.__value
@@ -27,13 +27,14 @@ class Data(Subject):
 
 class LinkedList(IStructureDriver, Observer):
 
-    class Node:
+    class Node(Data):
 
         def __init__(self, data, nxt=None, prev=None):
+            super.__init__(data)
             # исли пользователь введет для ссылок, что то не то установиться None
             self.__next = nxt if isinstance(nxt, (type(self))) else None
             self.__prev = ref(prev) if isinstance(prev, (type(self))) else None
-            self.__data = Data(data)
+            #self.__data = Data(data)
 
         @property
         def prev(self):
