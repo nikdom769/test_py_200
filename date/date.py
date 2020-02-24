@@ -2,7 +2,6 @@
 # Слушатель (ФИО): Домичев Н.Н.
 
 class Date:
-class Date:
     DAY_OF_MONTH = ((31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),  # usual year
                     (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31))  # intercalary year
 
@@ -68,9 +67,8 @@ class Date:
         return f"{self.__day}.{self.__month}.{self.__year}"
 
     @date.setter
-    def date(self, *value):
-        self.__year, self.__month, self.__day = self.__is_valid_date(1*value)
-        #self.__init__(*value)
+    def date(self, value):
+        self.__year, self.__month, self.__day = self.__is_valid_date(*value)
 
     @property
     def day(self):

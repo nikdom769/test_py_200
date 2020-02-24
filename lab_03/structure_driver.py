@@ -85,7 +85,7 @@ class CSVDriver(IStructureDriver):
             for k, v in d.items():
                 wrt.writerow({self.__fieldnames[0]: k, self.__fieldnames[1]: v})
 
-
+"""
 # Где применяется этот код
 class SDWorker:
     def __init__(self, structure_driver: IStructureDriver):
@@ -113,3 +113,4 @@ class SDWorker:
 
     def __write_to_sd(self, d):
         self.__structure_driver.write(d)
+"""

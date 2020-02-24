@@ -11,18 +11,21 @@ from observer import *
 
 
 class Data(Subject):
+
     # обертка  для простых данных
     def __init__(self, value):
         super().__init__()
+        # если убрать ошибка AttributeError: 'Node' object
+        # has no attribute '_Subject__o'
         self.__value = value
-        #self.add_observer(self.__value)
 
     def read_val(self):
         return self.__value
-
+    
     def write_val(self, value):
-        self.notify()
-        self.__value = value
+        if value != self.__value:
+            self.__value = value
+            self.notify()
 
 
 class LinkedList(IStructureDriver, Observer):
@@ -30,7 +33,7 @@ class LinkedList(IStructureDriver, Observer):
     class Node(Data):
 
         def __init__(self, data, nxt=None, prev=None):
-            super.__init__(data)
+            super().__init__(data)
             # исли пользователь введет для ссылок, что то не то установиться None
             self.__next = nxt if isinstance(nxt, (type(self))) else None
             self.__prev = ref(prev) if isinstance(prev, (type(self))) else None
@@ -46,7 +49,7 @@ class LinkedList(IStructureDriver, Observer):
 
         @property
         def data(self):
-            return self.__data.read_val() #self.__data
+            return self.read_val()
 
         @prev.setter
         def prev(self, prev):
@@ -63,7 +66,7 @@ class LinkedList(IStructureDriver, Observer):
                 raise TypeError("Next must be None or Node")
 
         def __repr__(self):
-            return f"Node({self.__data}, {self.__prev}, {self.__next})"
+            return f"Node({self.data}, {self.__prev}, {self.__next})"
 
         def __str__(self):
             return f"{self.data}"
@@ -83,6 +86,8 @@ class LinkedList(IStructureDriver, Observer):
         new_node = self.Node(data, nxt=current.next_, prev=current)
         current.next_.prev = new_node
         current.next_ = new_node
+        new_node.add_observer(self) # добавление в качестве слушателя
+        self.update() # обновление данных при вставке новой Node
         self.len += 1
     
     def _find_ind(self, ind=0):
@@ -113,6 +118,8 @@ class LinkedList(IStructureDriver, Observer):
         """
         current.prev.next_ = current.next_
         current.next_.prev = current.prev  # если строки поменять местами работать не будет
+        current.remove_observer(self) # удаление данных из наблюдателя
+        self.update() # обновление данных при удалении Node
         self.len -= 1
         
     # Пользовательские методы
@@ -150,7 +157,7 @@ class LinkedList(IStructureDriver, Observer):
         Return: value 
         """
         f_node = self._find_ind(ind)
-        # проверка правильности индекса вынесена в метод _finde_ind
+        # проверка правильности индекса вынесена в методе _find_ind
         if ind >= 0:
             self._del_node(f_node.next_)
             return f"{f_node.next_.data}"
@@ -173,6 +180,21 @@ class LinkedList(IStructureDriver, Observer):
         """
         self.__init__()
 
+
+    def value(self, ind=0):
+        """
+        Return value Node for index 
+        """
+        node = self._find_ind(ind)
+        return node.next_.data
+    
+    def value_set(self, data, ind=0):
+        """
+        Rewriter value Node for index
+        """
+        node = self._find_ind(ind)
+        node.next_.write_val(data)
+
     def __str__(self):
         if self.len:
             nxt_node = self.__head.next_
@@ -187,6 +209,9 @@ class LinkedList(IStructureDriver, Observer):
         self.__structure_driver = structure_driver  # для добавления интерфейса чтения записи
 
     def __to_dict(self):
+        """
+        from LinkedList to dict
+        """
         res = {}
         node = self.__head.next_
         for i in range(self.len):
@@ -196,6 +221,9 @@ class LinkedList(IStructureDriver, Observer):
         return res
 
     def __from_dict(self, dict_):
+        """
+        from dict to LinkedList
+        """
         for ind, value in dict_.items():
             self.append(value)
         return self
@@ -205,3 +233,7 @@ class LinkedList(IStructureDriver, Observer):
 
     def load(self):
         self.__from_dict(self.__structure_driver.read())
+
+    def update(self):
+        print('Linked list update')
+        self.save()
