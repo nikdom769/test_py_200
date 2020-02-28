@@ -1,15 +1,15 @@
 ﻿"""
 Основной файл, запускающий программу
 """
-#import os
+
 import sys
-#import csv
+import os
 import logging
-import argparse 
+import argparse
 
 # собственные модули
-#from library import Library
-from menu_choice import MenuChoice # MenuChoice
+sys.path.append("./Modules/")  # добавлена папка с подключаемыми модулями
+from menu_choice import MenuChoice
 import menu_console as mn
 
 
@@ -21,7 +21,7 @@ pars_arg.add_argument('-order',
                       required=False,
                       help="Enter DEBUG if you want DEBUG order")
 argum = pars_arg.parse_args(sys.argv[1:])
-argum.order = 0 if argum.order == 'DEBUG' else 1
+arg_d = 0 if argum.order == 'DEBUG' else 1
     
 
 # Инициализация log-файла
@@ -30,8 +30,13 @@ type_level = [logging.INFO, logging.DEBUG]
 logging.basicConfig(filename="./application.log",
                     filemode="at",
                     format=FORMAT,
-                    level=type_level[argum.order])
+                    level=type_level[arg_d])
 my_log_point = logging.getLogger("point_in_lib")
+
+
+# создание папки db
+if not os.path.isdir('./db'):
+    os.mkdir('./db')
 
 
 def main_progr():
@@ -56,7 +61,8 @@ if __name__ == "__main__":
     try:
         main_progr()
     except Exception as exc:
-        if argum.order == "DEBUG":
+        if arg_d:
             my_log_point.info(exc)
         else:
             my_log_point.debug(exc)
+

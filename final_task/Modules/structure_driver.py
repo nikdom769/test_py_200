@@ -19,7 +19,7 @@ class JSONFileDriver(IStructureDriver):
             return json.load(f)
 
     def write(self, d):
-        with open(self.__filename, 'w', encoding='UTF-8') as f:
+        with open(self.__filename, 'wt', encoding='UTF-8') as f:
             json.dump(d, f, ensure_ascii=False)
 
 
@@ -39,7 +39,7 @@ class CSVDriver(IStructureDriver):
     def read(self):
         result = []
         with open(self.__filename, 'r') as f:
-            rd = csv.DictReader(f, fieldnames=self.__fieldnames, dialect='unix')
+            rd = csv.DictReader(f, dialect='unix')
             for row in rd:
                 result.append(dict(row))
         return result
@@ -48,8 +48,8 @@ class CSVDriver(IStructureDriver):
         """
         param: list_d - список словарей (книг)
         """
-        with open(self.__filename, 'w') as f:
-            wrt = csv.DictWriter(f, fieldnames=self.__fieldnames, dialect='unix')
+        with open(self.__filename, 'wt') as f:
+            wrt = csv.DictWriter(f, dialect='unix', fieldnames=self.__fieldnames)
             wrt.writeheader()
             for book in list_d:
                 wrt.writerow(book)

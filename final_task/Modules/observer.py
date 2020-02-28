@@ -1,5 +1,6 @@
 from weakref import ref
 
+
 class Observer:
     # Наблюдатель
     def update(self):
@@ -7,9 +8,7 @@ class Observer:
 
 
 class Subject:
-
     """Добавлена слабая ссылка на наблюдателя"""
-
     def __init__(self):
         self.__o = set()
 
@@ -22,4 +21,3 @@ class Subject:
     def notify(self):
         for o in self.__o:
             o().update()
-
